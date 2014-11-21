@@ -3,6 +3,7 @@
 # and on authentication. Retrieving the user from session (:fetch) does
 # not trigger it.
 Warden::Manager.after_set_user :except => :fetch do |record, warden, options|
+  puts options.inspect
   if options[:mode] != :masquerade &&
      record.respond_to?(:update_unique_session_id!) && warden.authenticated?(options[:scope])
     unique_session_id = Devise.friendly_token
@@ -18,6 +19,7 @@ Warden::Manager.after_set_user :only => :fetch do |record, warden, options|
   scope = options[:scope]
   env   = warden.request.env
 
+  puts options.inspect
   if options[:mode] != :masquerade &&
      record.respond_to?(:unique_session_id) && warden.authenticated?(scope) && options[:store] != false
     if record.unique_session_id != warden.session(scope)['unique_session_id'] && !env['devise.skip_session_limitable']
